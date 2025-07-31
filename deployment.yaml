@@ -1,0 +1,42 @@
+# --- Манифест для Deployment ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app-deployment
+spec:
+  # Мы хотим, чтобы Kubernetes поддерживал 3 работающие копии нашего приложения
+  replicas: 3
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        # Это "этикетка", по которой Service найдет наши поды
+        app: flask-app
+    spec:
+      containers:
+      - name: flask-app-container
+        # Указываем тот же самый образ, что мы собирали ранее
+        image: skardiz/simple-flask-app:latest
+        ports:
+        - containerPort: 5000
+---
+# --- Манифест для Service ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app-service
+spec:
+  # Этот тип сервиса автоматически создает облачный балансировщик 
+  # нагрузки (в Yandex.Cloud) и выделяет ему публичный IP-адрес.
+  type: LoadBalancer
+  selector:
+    # Service будет искать все поды с "этикеткой" app: flask-app
+    app: flask-app
+  ports:
+  - protocol: TCP
+    # Внешний порт, по которому мы будем заходить на сайт
+    port: 80
+    # Внутренний порт контейнера, на который будет идти трафик
+    targetPort: 5000

@@ -1,0 +1,16 @@
+# Локальные файлы состояния Terraform
+*.tfstate
+*.tfstate.*
+
+# Файлы с логами крешей
+crash.log
+
+# Файлы, исключенные из рекурсивного обхода модулей
+.terraformrc
+terraform.rc
+
+# Секретные файлы с ключами
+*.json
+
+# Папка с плагинами Terraform
+.terraform/
